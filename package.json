@@ -1,11 +1,12 @@
 {
-  "name": "oscar-ai-second-brain",
-  "version": "0.1.0",
+  "name": "timo-second-brain",
+  "version": "0.2.0",
   "type": "module",
   "description": "Multi-agent AI system powered by Obsidian Vault knowledge engine",
-  "author": "Oscar AI",
+  "author": "Timo AI",
   "license": "MIT",
   "bin": {
+    "timo": "dist/cli.js",
     "oscar": "dist/cli.js"
   },
   "scripts": {
@@ -13,10 +14,16 @@
     "dev": "tsc --watch",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "mcp": "node --loader ts-node/esm dist/mcp/server.js",
-    "search": "node --loader ts-node/esm dist/cli.js search",
-    "health": "node --loader ts-node/esm dist/cli.js health",
-    "reindex": "node --loader ts-node/esm dist/cli.js reindex"
+    "mcp": "node dist/mcp/server.js",
+    "search": "node dist/cli.js search",
+    "health": "node dist/cli.js health",
+    "reindex": "node dist/cli.js reindex",
+    "ask": "node dist/cli.js ask",
+    "panel": "node dist/cli.js panel",
+    "config": "node dist/cli.js config",
+    "models": "node dist/cli.js models",
+    "permissions": "node dist/cli.js permissions",
+    "costs": "node dist/cli.js costs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",

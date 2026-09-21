@@ -1,0 +1,18 @@
+Lee CLAUDE.md, PLAN.md, SPEC.md e INFORME-FINAL.md. Una pasada anterior (modelo Haiku) dejo el sistema INCOMPLETO y el informe exagera. Tu trabajo: auditar el codigo existente y COMPLETAR todo lo que falta hasta que SPEC.md se cumpla de verdad. Trabaja de forma totalmente autonoma, sin preguntar nada.
+
+RENOMBRADO OBLIGATORIO: el sistema se llama TIMO SECOND BRAIN (no Oscar). La carpeta ya es timo-second-brain. Renombra: nombre de paquete y bin CLI a `timo`, servidor MCP a `timo-second-brain`, comando `.claude/commands/timo.md` (deja `oscar.md` como alias que remite a timo), variables de entorno con prefijo TIMO_ (leyendo OSCAR_ como fallback), y todos los textos de CLAUDE.md, README, config e informe. Migra el .env existente sin perder valores.
+
+FALLOS VERIFICADOS QUE DEBES CORREGIR:
+1. El MCP solo expone 7 herramientas. Implementa TODAS las de SPEC.md secciones 9 y 17: vault_search, vault_read, vault_context, vault_related, vault_backlinks, vault_recent, vault_project, vault_case, vault_person, vault_company, vault_create_draft, vault_create_research, vault_create_decision, vault_create_summary, save_decisions, ask_gpt, ask_grok, compare_models, legal_review, contract_review, red_team, research_panel, ai_panel, synthesize, project_context, project_status, project_decisions, project_next_actions, health, reindex, ai_costs.
+2. La carpeta D:\Segundo Cerebro\_AI NO existe. Crea la estructura de config/vault.yaml.
+3. `pnpm run health` falla por ts-node. La CLI debe correr desde dist compilado (node dist/cli.js) y los scripts de package.json deben funcionar: timo health|reindex|search|ask|panel|config|models|permissions|costs.
+4. Nombres de modelo hardcodeados y desactualizados (gpt-4o, grok-2-vision-12b). Busca en la web (WebSearch/WebFetch) los modelos ACTUALES recomendados de OpenAI (platform.openai.com/docs/models) y de xAI (docs.x.ai) y la interfaz vigente (OpenAI Responses API). Los nombres van SOLO en config/models.yaml y .env.example como defaults; en src/ nunca. Verifica la API de OpenAI con una llamada minima real usando la key de .env (no la muestres).
+5. XAI_API_KEY esta vacia: construye y testea el provider en modo opcional; health debe mostrar GROK: NOT CONFIGURED sin fallar.
+6. El MCP no esta registrado en Claude Code. Registralo con el mecanismo vigente (`claude mcp add --help` para la sintaxis; ruta absoluta a dist), y VERIFICA con `claude mcp list` que aparece conectado y ejecutando una herramienta real (por ejemplo `claude -p` invocando vault_search).
+7. Crea los prompts especializados de SPEC.md secciones 15 y 16 en prompts/ y usalos en legal_review, contract_review, red_team, ai_panel y synthesize.
+8. Logging JSONL con tokens y costo estimado; `ai_costs` con hoy/semana/mes/proveedor/modelo.
+9. Seguridad completa segun config/permissions.yaml: confidencialidad por frontmatter (incluye mapeo `confidencial: true` -> strict), redaccion, bloqueo de secretos, delimitacion anti-injection, prohibicion real de escribir fuera de _AI. Tests para cada una.
+10. Prueba end-to-end REAL de SPEC.md seccion 43 con GPT (la key existe): crea la nota de prueba en _AI/Drafts y comprueba que ningun original cambio (hashes antes/despues).
+11. Reescribe README e INFORME-FINAL.md con el estado REAL y verificado, sin inflar cifras. Incluye conteo real de herramientas y documentos indexados y explica por que se indexaron menos .md de los 195 existentes si es el caso.
+
+Reglas: nunca edites ni borres notas originales del Vault; escribe solo en _AI. No muestres claves. No configures git remote. Commit por bloque de trabajo. Al final imprime el informe.

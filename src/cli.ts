@@ -3,12 +3,22 @@
 import { Command } from 'commander'
 import { createIndexer } from './retrieval/indexer'
 import { createSearch } from './retrieval/search'
-import { config } from './config'
-import { createSecurityManager } from './security'
+import { config, validateConfig } from './config'
+import { createLogger } from './logging'
+
+const logger = createLogger('cli')
 
 const program = new Command()
 
-program.name('oscar').description('OSCAR AI Second Brain CLI').version('0.1.0')
+program.name('timo').description('TIMO Second Brain CLI').version('0.2.0')
+
+// Validate config on startup
+try {
+  validateConfig()
+} catch (error) {
+  console.error('❌ Configuration error:', (error as Error).message)
+  process.exit(1)
+}
 
 program
   .command('health')
@@ -23,8 +33,8 @@ program
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Vault:     ${config.vaultPath}
 Index:     ${docs.length} documents
-OpenAI:    ${config.openai.apiKey ? '✓' : '✗'}
-xAI/Grok:  ${config.xai.apiKey ? '✓' : '✗'}
+OpenAI:    ${config.openaiApiKey ? '✓' : '✗'}
+xAI/Grok:  ${config.xaiApiKey ? '✓' : '✗'}
 Status:    READY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
       `)
@@ -84,9 +94,12 @@ program
     console.log(`
 Configuration:
 - Vault: ${config.vaultPath}
+- AI Output: ${config.vaultAiPath()}
 - Database: ${config.dbPath}
-- OpenAI Model: ${config.openai.model}
-- xAI Model: ${config.xai.model}
+- OpenAI: ${config.openaiApiKey ? 'Configured' : 'Not configured'} (${config.openaiModel})
+- xAI/Grok: ${config.xaiApiKey ? 'Configured' : 'Not configured'} (${config.xaiModel})
+- Redaction: ${config.redactionEnabled ? 'Enabled' : 'Disabled'}
+- Log Level: ${config.logLevel}
     `)
   })
 

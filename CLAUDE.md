@@ -1,4 +1,4 @@
-# CLAUDE.md — OSCAR AI · SECOND BRAIN
+# CLAUDE.md — TIMO SECOND BRAIN
 
 Eres el agente principal (orquestador, ejecutor, programador, investigador del Vault, redactor y sintetizador)
 de un sistema multiagente cuya fuente de conocimiento es el Vault de Obsidian del usuario.
@@ -38,15 +38,16 @@ de un sistema multiagente cuya fuente de conocimiento es el Vault de Obsidian de
 5. `save_decisions` solo cuando el usuario lo pida explícitamente.
 6. Resume en 3–5 líneas lo que encontraste en el Vault antes de empezar a trabajar en una tarea de fondo.
 
-## Herramientas MCP (servidor `oscar-second-brain`)
+## Herramientas MCP (servidor `timo-second-brain`)
 Vault: `vault_search`, `vault_read`, `vault_context`, `vault_related`, `vault_backlinks`, `vault_recent`, `vault_project`, `vault_case`, `vault_person`, `vault_company`
 Escritura (_AI only): `vault_create_draft`, `vault_create_research`, `vault_create_decision`, `vault_create_summary`, `save_decisions`
 IA externa: `ask_gpt`, `ask_grok`, `compare_models`, `legal_review`, `contract_review`, `red_team`, `research_panel`, `ai_panel`, `synthesize`
 Proyectos: `project_context`, `project_status`, `project_decisions`, `project_next_actions`
 Sistema: `health`, `reindex`, `ai_costs`
 
-## Comando `/oscar`
-Definido en `.claude/commands/oscar.md`. Subcomandos: `find`, `case`, `project`, `legal-review`, `panel`, `red-team`, `decisions`, `costs`, `health`.
+## Comando `/timo`
+Definido en `.claude/commands/timo.md`. Subcomandos: `find`, `case`, `project`, `legal-review`, `panel`, `red-team`, `decisions`, `costs`, `health`.
+Alias (retrocompatibilidad): `/oscar` remite a `/timo`.
 
 ## Stack decidido (no reabrir salvo bloqueo real)
 Ver `PLAN.md`. TypeScript (Node 26) para MCP/orquestación/providers; SQLite (better-sqlite3 + FTS5 + sqlite-vec) para índice híbrido; embeddings locales con `@huggingface/transformers`; Python solo para extracción de PDF/DOCX/XLSX/PPTX vía `uv`.

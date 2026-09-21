@@ -125,3 +125,28 @@ export class SecurityManager {
 export function createSecurityManager(): SecurityManager {
   return new SecurityManager()
 }
+
+const securityManager = createSecurityManager()
+
+export function validatePermission(action: string, resource: string): boolean {
+  // Check if resource is in protected _AI directory
+  if (resource.includes('_AI/')) {
+    // Writing to _AI is allowed
+    if (action === 'create' || action === 'write') {
+      return true
+    }
+    // Deleting from _AI requires authorization (not auto-allowed)
+    if (action === 'delete') {
+      return false
+    }
+  }
+
+  // Writing to original Vault documents is not allowed
+  if (action === 'write' || action === 'modify' || action === 'delete') {
+    if (!resource.includes('_AI/')) {
+      return false
+    }
+  }
+
+  return true
+}
