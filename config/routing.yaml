@@ -1,0 +1,33 @@
+# Routing: which engines a task uses. The orchestrator may deviate when justified,
+# but must log the reason. Goal: better quality without multiplying cost.
+
+defaults:
+  local_first: true             # always resolve from vault index before any API
+  max_context_fragments: 12
+  max_context_tokens: 6000
+
+tasks:
+  vault_question:      { engines: [local] }               # no external model
+  document_search:     { engines: [local] }
+  fact_extraction:     { engines: [local], prefer_original_source: true }
+  coding:              { engines: [claude] }
+  drafting:            { engines: [claude] }
+  second_opinion:      { engines: [claude, gpt] }
+  legal_review:        { engines: [claude, gpt] }
+  contract_review:     { engines: [claude, gpt] }
+  consistency_review:  { engines: [claude, gpt] }
+  red_team:            { engines: [claude, grok] }
+  adversarial:         { engines: [claude, grok] }
+  high_stakes:         { engines: [claude, gpt, grok], synthesize: true }
+  panel:               { engines: [claude, gpt, grok], independent: true, synthesize: true }
+  research_panel:      { engines: [claude, gpt, grok], independent: true, synthesize: true }
+  local_only_doc:      { engines: [local_model] }
+
+synthesis:
+  judge: claude
+  compare: [agreements, differences, contradictions, new_arguments, evidence_support]
+  majority_is_not_evidence: true      # a claim wins by documentary support, not by vote
+
+escalation:
+  # words in the user request that upgrade routing
+  high_stakes_triggers: ["arbitraje", "CAS", "TAS", "FIFA", "CONMEBOL", "OFAC", "sanción", "litigio", "demanda"]

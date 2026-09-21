@@ -1,0 +1,27 @@
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Vault data must never be committed
+data/index/*
+data/cache/*
+data/logs/*
+!data/**/.gitkeep
+backups/
+
+# Dependencies / build
+node_modules/
+dist/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

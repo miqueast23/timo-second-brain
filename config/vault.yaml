@@ -1,0 +1,52 @@
+# Vault configuration — detected 2026-09-21
+vault:
+  path: "D:/Segundo Cerebro"          # source of truth (overridable by OSCAR_VAULT_PATH)
+  ai_dir: "_AI"                       # only folder AI agents may write to
+  # Existing AI memory protocol in the vault (do NOT modify; read as curated memory)
+  memory_dir: "AI Brain"
+  memory_index: "AI Brain/00 Inicio/AI Brain - Índice.md"
+  nested_vault: "Timo Cerebro"        # nested Obsidian vault; indexed as part of root
+
+index:
+  include_extensions: [".md", ".txt", ".pdf", ".docx", ".xlsx", ".pptx", ".canvas"]
+  exclude_dirs:
+    - ".obsidian"
+    - ".claude"
+    - ".git"
+    - ".trash"
+    - "_papelera-tutorial"
+    - "99 - Adjuntos"        # binaries: extract only on demand
+    - "Timo Cerebro/.obsidian"
+    - "Timo Cerebro/.claude"
+  max_file_mb: 25
+  chunk:
+    strategy: "heading"      # split by markdown headings, then by size
+    max_tokens: 700
+    overlap_tokens: 80
+  watch: true                # incremental reindex via file watcher (chokidar)
+  debounce_ms: 1500
+
+ai_dir_layout:
+  - Inbox
+  - Drafts
+  - Reviews
+  - Research
+  - Decisions
+  - Summaries
+  - Projects
+  - Logs
+  - System
+
+# Folder → semantic hints used by hybrid retrieval and vault_case / vault_project
+folder_roles:
+  "Timo Cerebro/01 - Proyectos": project
+  "Timo Cerebro/02 - Areas": area
+  "Timo Cerebro/03 - Recursos": resource
+  "Timo Cerebro/04 - Archivo": archive
+  "Timo Cerebro/05 - Diario": journal
+  "Timo Cerebro/conmebol": legal-sports
+  "AI Brain/02 Asuntos": case
+  "AI Brain/03 Personas y Clientes": person
+  "AI Brain/04 Decisiones": decision
+  "AI Brain/05 Conocimiento": knowledge
+  "AI Brain/06 Sesiones": session

@@ -1,0 +1,53 @@
+# Permission model. Enforced in src/security before any filesystem or provider call.
+
+filesystem:
+  read_vault: allow
+  search_vault: allow
+  create_ai_dir: allow
+  create_in_ai_dir: allow
+  edit_in_ai_dir: allow
+  edit_original: require_authorization     # backup + diff + explicit approval
+  delete_original: deny                    # absolute; no override
+  delete_in_ai_dir: require_authorization
+  write_outside_ai_dir: deny
+  protected_paths:                         # never written by any tool, even with authorization
+    - ".obsidian"
+    - ".claude"
+    - "CLAUDE.md"
+    - "AGENTS.md"
+    - "AI Brain"                           # existing memory protocol: read-only for this system
+
+backups:
+  dir: "backups"                           # inside project, gitignored
+  before_edit: true
+  keep_diff: true
+
+confidentiality:
+  frontmatter_key: confidentiality         # public | internal | confidential | strict
+  access_key: ai_access                    # all | selected | local-only | none
+  legacy_keys:                             # existing vault convention → mapped
+    "confidencial: true": strict
+  default_when_missing: ${OSCAR_DEFAULT_CONFIDENTIALITY}   # internal
+  rules:
+    public:       { external: allow }
+    internal:     { external: allow_enabled_providers }
+    confidential: { external: fragments_only, log_provider: true, redact: true }
+    strict:       { external: deny_unless_authorized }
+    local-only:   { external: deny, local_model: allow }
+    none:         { any_ai: deny }
+
+redaction:
+  enabled: ${OSCAR_REDACTION_ENABLED}
+  patterns: [cedula_ve, passport, email, phone, iban, bank_account, rif, tax_id, api_key, jwt, private_key, password_field]
+  secrets_policy: block          # if a secret is detected the payload is NOT sent; log "Secret detected and protected"
+
+prompt_injection:
+  treat_vault_as_data: true
+  wrap_context_in_delimiters: true
+  strip_instruction_like_lines: false      # keep text intact; rely on delimiting + system prompt
+  flag_patterns: ["ignore previous", "ignora las instrucciones", "system prompt", "you are now"]
+
+logging:
+  store_full_payloads: false
+  store_document_ids: true
+  store_token_counts: true

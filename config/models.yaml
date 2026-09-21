@@ -1,0 +1,55 @@
+# Model configuration. Model names are NEVER hardcoded in src/.
+# Env vars override these values: OPENAI_MODEL, XAI_MODEL, ANTHROPIC_MODEL, LOCAL_MODEL.
+# Claude Code MUST verify current model names against official docs before filling defaults.
+
+providers:
+  anthropic:
+    enabled: true
+    default_model: ${ANTHROPIC_MODEL}
+    # Claude Code is the primary agent; direct API use only when needed (avoid duplicate cost)
+    prefer_claude_code_runtime: true
+    max_output_tokens: 4096
+    pricing_usd_per_1m: { input: null, output: null }   # fill after verifying
+
+  openai:
+    enabled: true
+    default_model: ${OPENAI_MODEL}
+    api: responses            # verify: OpenAI "Responses API" is current recommended interface
+    max_output_tokens: 4096
+    temperature: 0.2
+    pricing_usd_per_1m: { input: null, output: null }
+
+  xai:
+    enabled: true
+    default_model: ${XAI_MODEL}
+    base_url: https://api.x.ai/v1     # verify against docs.x.ai at install time
+    max_output_tokens: 4096
+    temperature: 0.3
+    pricing_usd_per_1m: { input: null, output: null }
+
+  local:
+    enabled: false
+    provider: ${LOCAL_MODEL_PROVIDER}
+    default_model: ${LOCAL_MODEL}
+    base_url: ${OLLAMA_HOST}
+
+embeddings:
+  provider: local             # local first; never send vault text out just to embed it
+  model: "Xenova/multilingual-e5-small"   # via @huggingface/transformers, ES/EN capable
+  dimensions: 384
+  cache: true
+
+roles:
+  orchestrator: anthropic
+  executor: anthropic
+  vault_researcher: anthropic
+  drafter: anthropic
+  synthesizer: anthropic
+  second_opinion: openai
+  legal_reviewer: openai
+  contract_reviewer: openai
+  consistency_reviewer: openai
+  red_team: xai
+  challenger: xai
+  opposing_counsel: xai
+  local_only: local
