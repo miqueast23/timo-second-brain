@@ -1,0 +1,41 @@
+{
+  "name": "oscar-ai-second-brain",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Multi-agent AI system powered by Obsidian Vault knowledge engine",
+  "author": "Oscar AI",
+  "license": "MIT",
+  "bin": {
+    "oscar": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "mcp": "node --loader ts-node/esm dist/mcp/server.js",
+    "search": "node --loader ts-node/esm dist/cli.js search",
+    "health": "node --loader ts-node/esm dist/cli.js health",
+    "reindex": "node --loader ts-node/esm dist/cli.js reindex"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "@huggingface/transformers": "^4.3.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "chokidar": "^3.6.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.3.1",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.0",
+    "openai": "^4.52.0",
+    "sql.js": "^1.10.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.19.43",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
+  }
+}

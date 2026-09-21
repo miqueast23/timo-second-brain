@@ -1,55 +1,81 @@
-# Model configuration. Model names are NEVER hardcoded in src/.
-# Env vars override these values: OPENAI_MODEL, XAI_MODEL, ANTHROPIC_MODEL, LOCAL_MODEL.
-# Claude Code MUST verify current model names against official docs before filling defaults.
+# Provider Models Configuration
 
 providers:
-  anthropic:
-    enabled: true
-    default_model: ${ANTHROPIC_MODEL}
-    # Claude Code is the primary agent; direct API use only when needed (avoid duplicate cost)
-    prefer_claude_code_runtime: true
-    max_output_tokens: 4096
-    pricing_usd_per_1m: { input: null, output: null }   # fill after verifying
-
   openai:
-    enabled: true
-    default_model: ${OPENAI_MODEL}
-    api: responses            # verify: OpenAI "Responses API" is current recommended interface
-    max_output_tokens: 4096
-    temperature: 0.2
-    pricing_usd_per_1m: { input: null, output: null }
+    base_url: "https://api.openai.com/v1"
+    api_key_env: "OPENAI_API_KEY"
+    default_model: "${OPENAI_MODEL:-gpt-4o}"
+    models:
+      gpt-4o:
+        id: gpt-4o
+        tokens: 128000
+        vision: true
+        type: chat
+      gpt-4-turbo:
+        id: gpt-4-turbo-preview
+        tokens: 128000
+        vision: true
+        type: chat
+      gpt-4:
+        id: gpt-4
+        tokens: 8192
+        vision: false
+        type: chat
 
   xai:
-    enabled: true
-    default_model: ${XAI_MODEL}
-    base_url: https://api.x.ai/v1     # verify against docs.x.ai at install time
-    max_output_tokens: 4096
-    temperature: 0.3
-    pricing_usd_per_1m: { input: null, output: null }
+    base_url: "https://api.x.ai/v1"
+    api_key_env: "XAI_API_KEY"
+    default_model: "${XAI_MODEL:-grok-2}"
+    models:
+      grok-2:
+        id: grok-2-vision-12b
+        tokens: 32000
+        vision: true
+        type: chat
+      grok-3:
+        id: grok-3
+        tokens: 32000
+        vision: false
+        type: chat
 
-  local:
-    enabled: false
-    provider: ${LOCAL_MODEL_PROVIDER}
-    default_model: ${LOCAL_MODEL}
-    base_url: ${OLLAMA_HOST}
+  anthropic:
+    api_key_env: "ANTHROPIC_API_KEY"
+    default_model: "${ANTHROPIC_MODEL:-claude-opus-4-1}"
+    models:
+      claude-opus-4-1:
+        id: claude-opus-4-1-20250805
+        tokens: 200000
+        vision: true
+        type: chat
 
-embeddings:
-  provider: local             # local first; never send vault text out just to embed it
-  model: "Xenova/multilingual-e5-small"   # via @huggingface/transformers, ES/EN capable
-  dimensions: 384
-  cache: true
+  ollama:
+    base_url: "${OLLAMA_BASE_URL:-http://localhost:11434}"
+    default_model: "${OLLAMA_MODEL:-llama2}"
+    models:
+      llama2:
+        id: llama2
+        tokens: 4096
+        vision: false
+        type: local
+      llama2-13b:
+        id: llama2:13b
+        tokens: 4096
+        vision: false
+        type: local
 
 roles:
-  orchestrator: anthropic
-  executor: anthropic
-  vault_researcher: anthropic
-  drafter: anthropic
-  synthesizer: anthropic
-  second_opinion: openai
-  legal_reviewer: openai
-  contract_reviewer: openai
-  consistency_reviewer: openai
-  red_team: xai
-  challenger: xai
-  opposing_counsel: xai
-  local_only: local
+  coding:
+    providers: [openai, anthropic]
+    models: [gpt-4o, claude-opus-4-1]
+    
+  legal:
+    providers: [openai, anthropic]
+    models: [gpt-4o, claude-opus-4-1]
+    
+  adversarial:
+    providers: [xai]
+    models: [grok-2]
+    
+  research:
+    providers: [openai, xai, anthropic]
+    models: [gpt-4o, grok-2, claude-opus-4-1]

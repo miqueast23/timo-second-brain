@@ -1,33 +1,70 @@
-# Routing: which engines a task uses. The orchestrator may deviate when justified,
-# but must log the reason. Goal: better quality without multiplying cost.
+# Routing Configuration - determines which models to use for each task
 
-defaults:
-  local_first: true             # always resolve from vault index before any API
-  max_context_fragments: 12
-  max_context_tokens: 6000
+routing:
+  search:
+    local_only: true
+    description: "Vault search always local (FTS5 + embeddings)"
+    
+  simple_query:
+    providers: []
+    description: "No external APIs; answer from Vault context alone"
+    
+  coding:
+    primary: openai
+    model: gpt-4o
+    fallback: anthropic
+    description: "Code generation and refactoring"
+    
+  legal_review:
+    primary: openai
+    model: gpt-4o
+    secondary: anthropic
+    description: "Contract, legal document review"
+    
+  adversarial:
+    primary: xai
+    model: grok-2
+    description: "Red team, challenger role, opposite arguments"
+    
+  research:
+    primary: openai
+    model: gpt-4o
+    description: "General research and synthesis"
+    
+  consistency_check:
+    primary: anthropic
+    description: "Verify internal consistency"
+    
+  ai_panel:
+    models:
+      - provider: openai
+        model: gpt-4o
+        role: "primary analyst"
+      - provider: xai
+        model: grok-2
+        role: "challenger"
+      - provider: anthropic
+        model: claude-opus-4-1
+        role: "synthesizer (final)"
+    description: "Multi-agent analysis panel"
+    
+  synthesis:
+    primary: anthropic
+    model: claude-opus-4-1
+    description: "Final synthesis and judgment"
 
-tasks:
-  vault_question:      { engines: [local] }               # no external model
-  document_search:     { engines: [local] }
-  fact_extraction:     { engines: [local], prefer_original_source: true }
-  coding:              { engines: [claude] }
-  drafting:            { engines: [claude] }
-  second_opinion:      { engines: [claude, gpt] }
-  legal_review:        { engines: [claude, gpt] }
-  contract_review:     { engines: [claude, gpt] }
-  consistency_review:  { engines: [claude, gpt] }
-  red_team:            { engines: [claude, grok] }
-  adversarial:         { engines: [claude, grok] }
-  high_stakes:         { engines: [claude, gpt, grok], synthesize: true }
-  panel:               { engines: [claude, gpt, grok], independent: true, synthesize: true }
-  research_panel:      { engines: [claude, gpt, grok], independent: true, synthesize: true }
-  local_only_doc:      { engines: [local_model] }
-
-synthesis:
-  judge: claude
-  compare: [agreements, differences, contradictions, new_arguments, evidence_support]
-  majority_is_not_evidence: true      # a claim wins by documentary support, not by vote
-
-escalation:
-  # words in the user request that upgrade routing
-  high_stakes_triggers: ["arbitraje", "CAS", "TAS", "FIFA", "CONMEBOL", "OFAC", "sanción", "litigio", "demanda"]
+confidentiality_overrides:
+  strict:
+    routing: []
+    fallback: "local_only"
+    
+  confidential:
+    routing: [legal_review, consistency_check]
+    fallback: "local"
+    redact_before_send: true
+    
+  internal:
+    routing: [research, coding, adversarial]
+    
+  public:
+    routing: all
