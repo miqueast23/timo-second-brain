@@ -1,6 +1,10 @@
-# OSCAR AI — Second Brain
+# TIMO SECOND BRAIN
 
-Multi-agent AI system powered by Obsidian Vault knowledge engine. Integrates Claude Code, OpenAI/GPT, and xAI/Grok for intelligent analysis with your personal knowledge base as the single source of truth.
+Personal AI knowledge system powered by Obsidian Vault, with local indexing and multi-model analysis (Claude, GPT, Grok).
+
+**TIMO** = _Tiempo Inteligente para Mi Operación_ (Intelligent Time for My Operation)
+
+Multi-agent system: Claude Code is the main orchestrator; GPT provides second opinions; Grok challenges adversarially. Your Vault is the single source of truth.
 
 ## Features
 
